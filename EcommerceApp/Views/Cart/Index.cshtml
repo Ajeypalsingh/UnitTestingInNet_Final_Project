@@ -1,0 +1,61 @@
+﻿@model EcommerceApp.Models.ViewModel.CartItemVM
+
+
+
+@if (Model.CartItem.Count == 0)
+{
+    <h2 class="mb-0">No Product in cart</h2>
+}
+else
+{
+
+    @foreach (CartItems cartitem in Model.CartItem)
+    {
+        <div class="card mb-2">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">@cartitem.Product.ProductName</h3>
+                <div>
+                    <a asp-action="RemoveFromCart" asp-route-productId="@cartitem.Product.ProductId" class="btn btn-primary">Remove</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Availabe Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@cartitem.Product.ProductDescription</td>
+                            <td>@cartitem.Product.PriceInCAD</td>
+                            <td>@cartitem.Quantity</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+
+    <div class="cart-total ">
+        <h4>Total Price:</h4>
+        <h3>@Model.TotalPrice.ToString("C")</h3>
+    </div>
+
+    <form method="post" asp-action="ConfirmOrder" asp-controller="Cart">
+        <div class="country-selector mb-2">
+            <label for="CountryId" class="mb-1">Select Order Destination Country:</label>
+            @Html.DropDownList("CountryId", Model.SelectListItems, "Select a country", new { @class = "form-control" })
+        </div>
+
+        <div class="checkout-button">
+            <button type="submit" class="btn btn-primary">Proceed to Confirm Order</button>
+        </div>
+    </form>
+
+    
+}
+

@@ -1,0 +1,36 @@
+﻿@model ICollection<EcommerceApp.Models.Order>
+
+@if(Model.Count() == 0)
+{
+    <h3>No Orders found.....</h3>
+} else
+{
+    @foreach (Order order in Model)
+    {
+        <div class="card mb-2">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Order Successful...</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Total Items</th>
+                            <th>Total Price</th>
+                            <th>Converted Price</th>
+                            <th>Country</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@order.TotalItems</td>
+                            <td>@order.TotalPrice</td>
+                            <td>@order.ConvertedPrice</td>
+                            <td>@order.DestinationCountry</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+}
