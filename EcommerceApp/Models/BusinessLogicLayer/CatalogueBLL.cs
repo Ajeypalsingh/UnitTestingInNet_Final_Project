@@ -7,7 +7,6 @@ namespace EcommerceApp.Models.BusinessLogicLayer
 
         private IProductRepository<Product> _productRepository;
        
-
         public CatalogueBLL(IProductRepository<Product> productRepository)
         {
             _productRepository = productRepository;
@@ -18,7 +17,7 @@ namespace EcommerceApp.Models.BusinessLogicLayer
             Product productFound = _productRepository.Get(id);
             if (productFound == null)
             {
-                throw new InvalidOperationException("Product not found");
+                throw new NullReferenceException("Product not found");
             }
             else
             {
@@ -31,7 +30,7 @@ namespace EcommerceApp.Models.BusinessLogicLayer
             ICollection<Product> productFound = _productRepository.GetAll();
             if (productFound == null)
             {
-                throw new InvalidOperationException("Product not found");
+                throw new NullReferenceException("Product not found");
             }
             else
             {
