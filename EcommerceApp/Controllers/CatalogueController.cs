@@ -14,6 +14,7 @@ namespace EcommerceApp.Controllers
             _cataloguebll = new CatalogueBLL(productRepo);
         }
 
+
         public IActionResult Index()
         {
             try

@@ -17,7 +17,7 @@ namespace EcommerceApp.Models.BusinessLogicLayer
             Product productFound = _productRepository.Get(id);
             if (productFound == null)
             {
-                throw new NullReferenceException("Product not found");
+                 throw new NullReferenceException("Product not found");
             }
             else
             {

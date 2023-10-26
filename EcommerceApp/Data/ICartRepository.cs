@@ -13,5 +13,5 @@ namespace EcommerceApp.Data
         public void AddOrder(Order order);
         public ICollection<Order> GetAllOrders();
         public void ClearCart();
-    } 
+    }  
 }

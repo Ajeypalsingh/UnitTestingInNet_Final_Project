@@ -11,8 +11,9 @@ namespace EcommerceApp.Data
         public ProductRepository(EcommerceAppContext context)
         {
             _context = context;
-
         }
+
+
         public Product Get(Guid id)
         {
             Product productToFind = _context.Product.FirstOrDefault(p => p.ProductId == id);

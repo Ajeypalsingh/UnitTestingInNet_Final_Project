@@ -12,6 +12,20 @@ namespace EcommerceApp.Models.BusinessLogicLayer
             _cartRepository = cartRepository;
         }
 
+        public Cart GetCart()
+        {
+            Cart cartForProducts = _cartRepository.GetCart();
+
+            if (cartForProducts == null)
+            {
+                throw new NullReferenceException("Cart not found");
+            }
+            else
+            {
+                return cartForProducts;
+            }
+        }
+
         public void RemoveProductFromCart(Guid productId)
         {
             _cartRepository.RemoveFromCart(productId);

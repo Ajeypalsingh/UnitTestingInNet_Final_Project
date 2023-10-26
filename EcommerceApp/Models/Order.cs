@@ -12,7 +12,7 @@ namespace EcommerceApp.Models
         [StringLength(60, ErrorMessage = "Address cannot exceed 60 characters.")]
         public string Address { get; set; }
 
-        [Required(ErrorMessage = "Country is required.")]
+        [Required(ErrorMessage = "Country is required.")]   
         [Display(Name = "Country")]
         public string DestinationCountry { get; set; }
 

@@ -6,6 +6,5 @@
         public ICollection<T> GetAll();
         public void AddToCart(Guid id);
         public ICollection<T> SearchProduct(string query);
-        
     } 
 }
