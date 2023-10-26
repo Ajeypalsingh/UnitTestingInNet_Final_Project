@@ -1,75 +1,103 @@
-﻿using System;
+﻿using EcommerceApp.Models;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.EntityFrameworkCore;
 
-IUserFactory userFactory = new UserFactory();
-
-User user1 = userFactory.CreateUser("userone", "password1", true, true);
-User user2 = userFactory.CreateUser("usertwo", "password2", false, false);
-
-Console.WriteLine("User 1 - Username: " + user1.Username);
-Console.WriteLine("User 2 - Username: " + user2.Username);
-
-if (user1 is AuthorizedUser authorizedUser1)
+namespace EcommerceApp.Data
 {
-    Console.WriteLine("User 1 is an Authorized User, Is Admin: " + authorizedUser1.IsAdmin);
-}
-
-if (user2 is AuthorizedUser authorizedUser2)
-{
-    Console.WriteLine("User 2 is an Authorized User, Is Admin: " + authorizedUser2.IsAdmin);
-}
-else
-{
-    Console.WriteLine("User 2 is a standard User.");
-}
-
-interface IUserFactory
-{
-    User CreateUser(string username, string password, bool twoFactor, bool isAdmin);
-}
-
-class User
-{
-    public string Username { get; private set; }
-    public string Password { get; private set; }
-
-    public User(string username, string password)
+    public class CartRepository : ICartRepository<Cart>
     {
-        Username = username;
-        Password = password;
-    }
+        private readonly IProductRepository<Product> _productRepository;
 
-    public virtual void PasswordHash()
-    {
-    }
-}
-
-class AuthorizedUser : User
-{
-    public bool IsAdmin { get; private set; }
-
-    public AuthorizedUser(string username, string password, bool isAdmin)
-        : base(username, password)
-    {
-        IsAdmin = isAdmin;
-    }
-}
-
-class UserFactory : IUserFactory
-{
-    public User CreateUser(string username, string password, bool twoFactor, bool isAdmin)
-    {
-        if (twoFactor)
+        private readonly EcommerceAppContext _context;
+        public CartRepository(EcommerceAppContext context, IProductRepository<Product> productRepository)
         {
-            return new AuthorizedUser(username, password, isAdmin);
+            _context = context;
+            _productRepository = productRepository;
         }
-        else
+        public Cart GetCart()
         {
-            if (isAdmin)
+            Cart cartForProducts = _context.Carts.FirstOrDefault();
+            if (cartForProducts == null)
             {
-                throw new Exception("TwoFactorAuthentication is required for creating a user.");
+                throw new NullReferenceException();
             }
-            return new User(username, password);
+            return cartForProducts;
         }
+
+        public void RemoveFromCart(Guid productId)
+        {
+            Product product = _productRepository.Get(productId);
+            Cart cart = GetCart();
+
+            // If quantity of item is more than 0 then decrement its quantity and if it becomes 0 remove object from list.
+            CartItems itemToDelete = _context.CartItems.FirstOrDefault(ci => ci.ProductId == productId && ci.CartId == cart.CartId);
+
+            if (itemToDelete != null)
+            {
+                if(itemToDelete.Quantity > 0)
+                {
+                    itemToDelete.Quantity--;
+                }
+
+                if (itemToDelete.Quantity == 0)
+                {
+                    _context.CartItems.Remove(itemToDelete);
+                }
+                product.AvailableQuantity++;
+                _context.SaveChanges();
+            }
+        }
+
+        public ICollection<CartItems> GetAllCartItem()
+        {
+            List<CartItems> addedItems = _context.CartItems.Include(ci => ci.Product).ToList();
+            return addedItems;
+        }
+
+        public ICollection<Country> GetAllCountries()
+        {
+            List<Country> allCountries = _context.Country.ToList();
+            return allCountries;
+        }
+        public decimal SumOfAllItemPriceInCart()
+        {
+            ICollection<CartItems> cartItems = GetAllCartItem();
+
+            decimal totalPrice = 0;
+
+            foreach (CartItems cartItem in cartItems)
+            {
+                totalPrice +=cartItem.Quantity * cartItem.Product.PriceInCAD;
+            }
+
+            return totalPrice;
+        }
+
+        public Country GetCountry(int? id)
+        {
+            Country foundCountry = _context.Country.FirstOrDefault(c => c.CountryId == id);
+            
+            return foundCountry;
+        }
+
+        public void AddOrder(Order order)
+        {
+            _context.Orders.Add(order);
+            _context.SaveChanges();
+        }
+
+        public ICollection<Order> GetAllOrders()
+        {
+            return _context.Orders.ToList();
+        }
+
+        public void ClearCart()
+        {
+            ICollection<CartItems> itemsToRemove = GetAllCartItem();
+            _context.CartItems.RemoveRange(itemsToRemove);
+            _context.SaveChanges();
+        }
+
     }
 }
-
