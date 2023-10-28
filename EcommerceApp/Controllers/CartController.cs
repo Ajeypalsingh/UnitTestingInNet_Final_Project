@@ -94,10 +94,10 @@ namespace EcommerceApp.Controllers
                 Address = model.Address,
                 MailingCode = model.MailingCode,
                 DestinationCountry = model.CountryName,
-                TotalPrice = model.PriceOfAllItems * model.NumberOfItems,
+                TotalPrice = model.PriceOfAllItems,
                 ConvertedPrice = model.ConvertedPrice,
                 PriceWithTax = model.TotalPriceWithTax,
-                TotalItems = model.NumberOfItems
+                TotalItems = model.NumberOfItems 
             };
 
             _cartBLL.AddOrder(order);
