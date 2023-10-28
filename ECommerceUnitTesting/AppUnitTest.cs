@@ -177,5 +177,172 @@ namespace ECommerceUnitTesting
             Assert.ThrowsException<NullReferenceException>(() => cartBll.GetCart());
         }
 
+        [TestMethod]
+        public void GetAllCartItems_ItemsInCart_ReturnsAllItems()
+        {
+            // Arrange
+            Mock<ICartRepository<Cart>> mockCartRepository = new Mock<ICartRepository<Cart>>();
+            List<CartItems> sampleCartItems = new List<CartItems>
+            {
+                new CartItems { Id = new Guid(), CartId = new Guid(), ProductId = new Guid() },
+                new CartItems { Id = new Guid(), CartId = new Guid(), ProductId = new Guid() },
+                new CartItems { Id = new Guid(), CartId = new Guid(), ProductId = new Guid() },
+                new CartItems { Id = new Guid(), CartId = new Guid(), ProductId = new Guid() }
+            };
+
+            mockCartRepository.Setup(repo => repo.GetAllCartItem()).Returns(sampleCartItems);
+
+            CartBLL cartBll = new CartBLL(mockCartRepository.Object);
+
+
+            // Act
+            var result = cartBll.GetAllCartItems();
+
+            // Assert
+            Assert.AreEqual(sampleCartItems.Count, result.Count);
+        }
+
+        [TestMethod]
+        public void GetCartPrice_ReturnsCorrectTotalPrice()
+        {
+            // Arrange
+            Mock<ICartRepository<Cart>> mockCartRepository = new Mock<ICartRepository<Cart>>();
+
+
+            var sampleCartItems = new List<CartItems>
+            {
+                new CartItems
+                {
+                    Product = new Product
+                    {
+                        PriceInCAD = 100.0M
+                    },
+                    Quantity = 2
+                },
+                new CartItems
+                {
+                    Product = new Product
+                    {
+                        PriceInCAD = 50.0M
+                    },
+                    Quantity = 3
+                }
+            };
+
+            decimal expectedTotalPrice = 250.0M;  
+
+            mockCartRepository.Setup(repo => repo.SumOfAllItemPriceInCart()).Returns(expectedTotalPrice);
+
+            CartBLL cartBll = new CartBLL(mockCartRepository.Object);
+
+            // Act
+            var actualTotalPrice = cartBll.GetCartPrice();
+
+            // Assert
+            Assert.AreEqual(expectedTotalPrice, actualTotalPrice);
+        }
+
+        [TestMethod]
+        public void GetAllCountries_ReturnsAllCountries()
+        {
+            // Arrange
+            Mock<ICartRepository<Cart>> mockCartRepository = new Mock<ICartRepository<Cart>>();
+            List<Country> testCounties = new List<Country>
+            {
+                new Country { CountryId = 1, CountryName = "USA" },
+                new Country { CountryId = 2, CountryName = "Canada" },
+                new Country { CountryId = 3, CountryName = "India" },
+                new Country { CountryId = 4, CountryName = "Pakistan" },
+                new Country { CountryId = 5, CountryName = "Australia" },
+                
+            };
+
+            mockCartRepository.Setup(repo => repo.GetAllCountries()).Returns(testCounties);
+
+            CartBLL cartBll = new CartBLL(mockCartRepository.Object);
+
+            // Act
+            var result = cartBll.GetAllCountries();
+
+            // Assert
+            Assert.AreEqual(testCounties.Count, result.Count);
+        }
+
+        [TestMethod]
+        public void GetCountry_ValidId_ReturnsExpectedCountry()
+        {
+            // Arrange
+            int? testId = 1;
+            Country testCountry = new Country { CountryId = 1, CountryName = "USA" };
+
+            Mock<ICartRepository<Cart>> mockCartRepository = new Mock<ICartRepository<Cart>>();
+            mockCartRepository.Setup(repo => repo.GetCountry(testId)).Returns(testCountry);
+
+            CartBLL cartBll = new CartBLL(mockCartRepository.Object);
+
+            // Act
+            var result = cartBll.GetCountry(testId);
+
+            // Assert
+            Assert.AreEqual(testCountry, result);
+        }
+
+        [TestMethod]
+        public void AddOrder_ValidOrder_IsCalled()
+        {
+            // Arrange
+            Order testOrder = new Order();
+
+            Mock<ICartRepository<Cart>> mockCartRepository = new Mock<ICartRepository<Cart>>();
+            mockCartRepository.Setup(repo => repo.AddOrder(testOrder));
+
+            CartBLL cartBll = new CartBLL(mockCartRepository.Object);
+
+            // Act
+            cartBll.AddOrder(testOrder);
+
+            // Assert
+            mockCartRepository.Verify(repo => repo.AddOrder(testOrder), Times.Once);
+        }
+
+
+        [TestMethod]
+        public void GetAllOrders_ReturnsAllOrders()
+        {
+            // Arrange
+            List<Order> testOrders = new List<Order>
+    {
+        new Order(),
+        new Order(),
+        new Order()
+    };
+
+            Mock<ICartRepository<Cart>> mockCartRepository = new Mock<ICartRepository<Cart>>();
+            mockCartRepository.Setup(repo => repo.GetAllOrders()).Returns(testOrders);
+
+            CartBLL cartBll = new CartBLL(mockCartRepository.Object);
+
+            // Act
+            var result = cartBll.GetAllOrders();
+
+            // Assert
+            Assert.AreEqual(testOrders.Count, result.Count);
+        }
+
+        [TestMethod]
+        public void ClearCart_IsCalled()
+        {
+            // Arrange
+            Mock<ICartRepository<Cart>> mockCartRepository = new Mock<ICartRepository<Cart>>();
+            mockCartRepository.Setup(repo => repo.ClearCart());
+
+            CartBLL cartBll = new CartBLL(mockCartRepository.Object);
+
+            // Act
+            cartBll.ClearCart();
+
+            // Assert
+            mockCartRepository.Verify(repo => repo.ClearCart(), Times.Once);
+        }
     }
 }

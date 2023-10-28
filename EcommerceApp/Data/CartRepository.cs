@@ -1,4 +1,4 @@
-﻿using EcommerceApp.Models;
+﻿ using EcommerceApp.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
@@ -60,6 +60,7 @@ namespace EcommerceApp.Data
             List<Country> allCountries = _context.Country.ToList();
             return allCountries;
         }
+
         public decimal SumOfAllItemPriceInCart()
         {
             ICollection<CartItems> cartItems = GetAllCartItem();
@@ -77,7 +78,6 @@ namespace EcommerceApp.Data
         public Country GetCountry(int? id)
         {
             Country foundCountry = _context.Country.FirstOrDefault(c => c.CountryId == id);
-            
             return foundCountry;
         }
 
@@ -98,6 +98,5 @@ namespace EcommerceApp.Data
             _context.CartItems.RemoveRange(itemsToRemove);
             _context.SaveChanges();
         }
-
     }
 }

@@ -50,7 +50,9 @@ namespace EcommerceApp.Models.BusinessLogicLayer
 
         public Country GetCountry(int? id)
         {
-            return _cartRepository.GetCountry(id);
+            Country countryFound = _cartRepository.GetCountry(id);
+            return countryFound;
+
         }
 
         public void AddOrder(Order order)

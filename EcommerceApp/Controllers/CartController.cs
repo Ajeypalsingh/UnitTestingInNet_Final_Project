@@ -94,7 +94,7 @@ namespace EcommerceApp.Controllers
                 Address = model.Address,
                 MailingCode = model.MailingCode,
                 DestinationCountry = model.CountryName,
-                TotalPrice = model.PriceOfAllItems,
+                TotalPrice = model.PriceOfAllItems * model.NumberOfItems,
                 ConvertedPrice = model.ConvertedPrice,
                 PriceWithTax = model.TotalPriceWithTax,
                 TotalItems = model.NumberOfItems
